@@ -1,4 +1,7 @@
-from flask import flask
+"""
+This package represents an Arsenal HTTP C2 Server.
+"""
+from flask import Flask
 
 def create_app(**config_overrides):
     """

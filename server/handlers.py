@@ -9,9 +9,19 @@ def new_agent(data):
     """
     This handler is called when an agent checks in and does not have an existing session id.
     """
-    # TODO: Implement exception handling
-    interfaces = data['facts']['interfaces']
-    mac_addrs = [interface['mac_addr'] for interface in interfaces]
+    # TODO: Update target facts
+    mac_addrs = None
+    try:
+        interfaces = data['facts']['interfaces']
+        mac_addrs = [interface['mac_addr'] for interface in interfaces]
+    except KeyError:
+        # Legacy Format Support
+        interfaces = data['interfaces']
+        mac_addrs = interfaces.keys()
+
+    # TODO: Implement exception handling if proper data was not received
+
+    # TODO: Implement Fact submission
 
     config = data.get('config', {})
     servers = config.get('servers', [SERVER_ADDRESS if SERVER_ADDRESS else public_ip()])

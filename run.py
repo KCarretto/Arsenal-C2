@@ -4,6 +4,7 @@
 
 from server import create_app
 
+SERVER = create_app()
+
 if __name__ == '__main__':
-    SERVER = create_app()
     SERVER.run(debug=False, host='0.0.0.0', port=8080)

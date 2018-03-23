@@ -1,0 +1,13 @@
+[Unit]
+Description=Arsenal HTTP C2
+After=network.target
+
+[Service]
+ExecStart=/bin/bash -c "cd /opt/Arsenal-C2; source /opt/Arsenal-C2/venv/bin/activate; uwsgi --ini uwsgi.ini"
+ExecReload=/bin/kill -SIGQUIT $MAINPID
+KillSignal=SIGTERM
+StandardError=syslog
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

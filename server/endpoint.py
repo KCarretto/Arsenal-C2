@@ -19,9 +19,10 @@ def handle_agent():
         'error': True
     }
     if not session_id:
-        resp = new_agent(data)
-    else:
-        resp = existing_agent(data)
+        session_id = new_agent(data)
+        data['session_id'] = session_id
+
+    resp = existing_agent(data)
 
     json_resp = jsonify(resp)
     json_resp.headers['Connection'] = 'close'

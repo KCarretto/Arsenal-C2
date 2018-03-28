@@ -29,7 +29,7 @@ def handle_agent():
 
     return json_resp
 
-@ROUTES.route('/test')
+@ROUTES.route('/test', methods=['GET', 'POST'])
 def test_response():
     """
     This function will return a sample of a standard response using static data.

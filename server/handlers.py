@@ -30,7 +30,7 @@ def new_agent(data):
 
     session_id = Session.create_session(mac_addrs, servers, interval, interval_delta, config)
     resp = Session.session_checkin(session_id, data.get('responses'))
-    resp['actions'] = [action.raw_data for action in resp['actions']]
+    resp['actions'] = [action.raw_json for action in resp['actions']]
     return resp
 
 def existing_agent(data):
@@ -50,7 +50,7 @@ def existing_agent(data):
 
     # TODO: Handle session does not exist
     resp = Session.session_checkin(session_id, data.get('responses'))
-    resp['actions'] = [action.raw_data for action in resp['actions']]
+    resp['actions'] = [action.raw_json for action in resp['actions']]
 
     return resp
 

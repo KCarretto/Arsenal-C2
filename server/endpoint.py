@@ -3,6 +3,8 @@
 """
 from flask import Blueprint, request, jsonify
 from .handlers import new_agent, existing_agent
+from .exceptions import InvalidRequest
+from .utils import log, error_response
 ROUTES = Blueprint('endpoint', __name__)
 
 @ROUTES.route('/', methods=['POST'])
@@ -10,24 +12,33 @@ def handle_agent():
     """
     This method handles any incoming agent connections.
     """
-    data = request.get_json()
-    # TODO: Add log
+    try:
+        data = request.get_json()
+        session_id = data.get('session_id')
 
-    session_id = data.get('session_id')
+        resp = {
+            'error': True
+        }
 
-    resp = {
-        'error': True
-    }
-    if not session_id:
-        session_id = new_agent(data)
-        data['session_id'] = session_id
+        if not session_id:
+            session_id = new_agent(data)
+            data['session_id'] = session_id
 
-    resp = existing_agent(data)
+        log("Checking in {}".format(session_id))
 
-    json_resp = jsonify(resp)
-    json_resp.headers['Connection'] = 'close'
+        resp = existing_agent(data)
 
-    return json_resp
+        json_resp = jsonify(resp)
+        json_resp.headers['Connection'] = 'close'
+
+        return json_resp
+    except InvalidRequest as exception:
+        json_resp = jsonify(
+            error_response(400, exception.name, str(exception))
+        )
+        json_resp.headers['Connection'] = 'close'
+
+        return json_resp
 
 @ROUTES.route('/test', methods=['GET', 'POST'])
 def test_response():

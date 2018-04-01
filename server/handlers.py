@@ -3,22 +3,25 @@ This module contains handlers that will deal with incoming connections.
 """
 from .client import Session
 from .config import SERVER_ADDRESS
-from .utils import public_ip
+from .utils import public_ip, log
+from .exceptions import InvalidRequest
 
 def new_agent(data):
     """
     This handler is called when an agent checks in and does not have an existing session id.
     """
+    log("Registering new agent")
     mac_addrs = None
 
-    facts = data.get('facts')
-    if facts and isinstance(facts, dict):
-        mac_addrs = [interface['mac_addr'] for interface in data['facts']['interfaces']]
-    else:
-        # Legacy Format Support
-        mac_addrs = data['interfaces'].keys()
-
-    # TODO: Implement exception handling if proper data was not received
+    try:
+        facts = data.get('facts')
+        if facts and isinstance(facts, dict):
+            mac_addrs = [interface['mac_addr'] for interface in data['facts']['interfaces']]
+        else:
+            # Legacy Format Support
+            mac_addrs = data['interfaces'].keys()
+    except KeyError:
+        raise InvalidRequest('Missing required parameter.')
 
     config = data.get('config', {})
     servers = config.get('servers', [SERVER_ADDRESS if SERVER_ADDRESS else public_ip()])

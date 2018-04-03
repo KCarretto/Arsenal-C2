@@ -5,7 +5,10 @@ from flask import Blueprint, request, jsonify
 from .handlers import new_agent, existing_agent
 from .exceptions import InvalidRequest
 from .utils import log, error_response
+from .client import ArsenalClient, API_KEY_FILE
 ROUTES = Blueprint('endpoint', __name__)
+
+CLIENT = ArsenalClient(api_key_file=API_KEY_FILE)
 
 @ROUTES.route('/', methods=['POST'])
 def handle_agent():
@@ -21,12 +24,12 @@ def handle_agent():
         }
 
         if not session_id:
-            session_id = new_agent(data)
+            session_id = new_agent(CLIENT, data)
             data['session_id'] = session_id
 
         log("Checking in {}".format(session_id))
 
-        resp = existing_agent(data)
+        resp = existing_agent(CLIENT, data)
 
         json_resp = jsonify(resp)
         json_resp.headers['Connection'] = 'close'

@@ -1,12 +1,11 @@
 """
 This module contains handlers that will deal with incoming connections.
 """
-from .client import Session
 from .config import SERVER_ADDRESS
 from .utils import public_ip, log
 from .exceptions import InvalidRequest
 
-def new_agent(data):
+def new_agent(client, data):
     """
     This handler is called when an agent checks in and does not have an existing session id.
     """
@@ -28,9 +27,9 @@ def new_agent(data):
     interval = config.get('interval', -1)
     interval_delta = config.get('interval_delta', -1)
 
-    return Session.create_session(mac_addrs, servers, interval, interval_delta, config, facts)
+    return client.create_session(mac_addrs, servers, interval, interval_delta, config, facts)
 
-def existing_agent(data):
+def existing_agent(client, data):
     """
     This handler is called when an agent with a session id checks in.
     """
@@ -38,7 +37,7 @@ def existing_agent(data):
     session_id = data['session_id']
 
     # TODO: Handle session does not exist
-    resp = Session.session_checkin(
+    resp = client.session_checkin(
         session_id,
         data.get('responses'),
         data.get('config'),

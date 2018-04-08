@@ -28,7 +28,7 @@ def new_agent(client, data):
     interval = config.get('interval', -1)
     interval_delta = config.get('interval_delta', -1)
 
-    return client.create_session(target_uuid, servers, interval, interval_delta, config, facts)
+    return client.create_session(target_uuid.lower(), servers, interval, interval_delta, config, facts)
 
 def existing_agent(client, data):
     """

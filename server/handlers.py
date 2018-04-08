@@ -11,9 +11,11 @@ def new_agent(client, data):
     """
     log("Registering new agent")
     target_uuid = None
+    facts = None
 
     try:
         target_uuid = data.get('uuid')
+        facts = data.get('facts')
 
         # Enable Legacy Format Support
         if not target_uuid:
@@ -28,7 +30,13 @@ def new_agent(client, data):
     interval = config.get('interval', -1)
     interval_delta = config.get('interval_delta', -1)
 
-    return client.create_session(target_uuid.lower(), servers, interval, interval_delta, config, facts)
+    return client.create_session(
+        target_uuid.lower(),
+        servers,
+        interval,
+        interval_delta,
+        config,
+        facts)
 
 def existing_agent(client, data):
     """

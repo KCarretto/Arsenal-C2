@@ -10,24 +10,25 @@ def new_agent(client, data):
     This handler is called when an agent checks in and does not have an existing session id.
     """
     log("Registering new agent")
-    mac_addrs = None
+    target_uuid = None
 
     try:
-        facts = data.get('facts')
-        if facts and isinstance(facts, dict):
+        target_uuid = data.get('uuid')
+
+        # Enable Legacy Format Support
+        if not target_uuid:
+            facts = data.get('facts')
             mac_addrs = [interface['mac_addr'] for interface in data['facts']['interfaces']]
-        else:
-            # Legacy Format Support
-            mac_addrs = data['interfaces'].keys()
+            target_uuid = ''.join(sorted(mac_addrs))
     except KeyError:
-        raise InvalidRequest('Missing required parameter.')
+        raise InvalidRequest('LEGACY MODE: Missing required parameter.')
 
     config = data.get('config', {})
     servers = config.get('servers', [SERVER_ADDRESS if SERVER_ADDRESS else public_ip()])
     interval = config.get('interval', -1)
     interval_delta = config.get('interval_delta', -1)
 
-    return client.create_session(mac_addrs, servers, interval, interval_delta, config, facts)
+    return client.create_session(target_uuid, servers, interval, interval_delta, config, facts)
 
 def existing_agent(client, data):
     """

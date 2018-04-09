@@ -5,10 +5,11 @@ from flask import Blueprint, request, jsonify
 from .handlers import new_agent, existing_agent
 from .exceptions import InvalidRequest
 from .utils import log, error_response
-from .client import ArsenalClient, API_KEY_FILE
+from .client import ArsenalClient
+from .config import API_KEY_FILE, TEAMSERVER_URI
 ROUTES = Blueprint('endpoint', __name__)
 
-CLIENT = ArsenalClient(api_key_file=API_KEY_FILE)
+CLIENT = ArsenalClient(teamserver_uri=TEAMSERVER_URI, api_key_file=API_KEY_FILE)
 
 @ROUTES.route('/', methods=['POST'])
 def handle_agent():

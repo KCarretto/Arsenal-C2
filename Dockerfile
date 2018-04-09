@@ -14,6 +14,7 @@ COPY server /opt/arsenal-c2/server
 COPY requirements.txt /opt/arsenal-c2/requirements.txt
 COPY run.py /opt/arsenal-c2/run.py
 COPY docker/uwsgi.ini /opt/arsenal-c2/uwsgi.ini
+COPY docker/arsenal_key /opt/arsenal-c2/.arsenal_key
 
 # Install requirements
 RUN pip3 install --upgrade pip

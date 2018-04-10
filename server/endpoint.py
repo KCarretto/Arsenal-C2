@@ -6,7 +6,7 @@ from .handlers import new_agent, existing_agent
 from .exceptions import InvalidRequest
 from .utils import log, error_response
 from .client import ArsenalClient
-from .config import API_KEY_FILE, TEAMSERVER_URI
+from .config import API_KEY_FILE, TEAMSERVER_URI, SERVER_ADDRESS
 ROUTES = Blueprint('endpoint', __name__)
 
 CLIENT = ArsenalClient(teamserver_uri=TEAMSERVER_URI, api_key_file=API_KEY_FILE)
@@ -36,6 +36,8 @@ def handle_agent():
         json_resp.headers['Connection'] = 'close'
 
         return json_resp
+
+    # Handle exception where agent provides invalid request
     except InvalidRequest as exception:
         json_resp = jsonify(
             error_response(400, exception.name, str(exception))
@@ -43,6 +45,23 @@ def handle_agent():
         json_resp.headers['Connection'] = 'close'
 
         return json_resp
+
+    # Catch unhandled exceptions, and attempt to log an error to the teamserver
+    except Exception as exception: # pylint: disable=broad-except
+        json_resp = jsonify(
+            error_response(400, 'unhandled-exception', str(exception))
+        )
+        json_resp.headers['Connection'] = 'close'
+
+        try:
+            CLIENT.create_log(
+                'arsenal-c2', 'CRIT', '[{}] {}'.format(SERVER_ADDRESS, str(exception))
+            )
+        except Exception: # pylint: disable=broad-except
+            pass
+
+        return json_resp
+
 
 @ROUTES.route('/test', methods=['GET', 'POST'])
 def test_response():

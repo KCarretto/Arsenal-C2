@@ -62,6 +62,34 @@ def handle_agent():
 
         return json_resp
 
+@ROUTES.route('/status', methods=['GET', 'POST'])
+def get_status():
+    """
+    Return status information about the C2.
+    """
+    connected = False
+    try:
+        CLIENT.get_current_context()
+        connected = True
+    except Exception: # pylint: disable=broad-except
+        pass
+
+    has_api_key = True if CLIENT.api_key else False
+
+    json_resp = jsonify(
+        {
+            'status': 200,
+            'state': 'running',
+            'teamserver_connected': connected,
+            'api_key': has_api_key,
+        }
+    )
+
+    if not connected or not has_api_key:
+        json_resp.status_code = 500
+
+    return json_resp
+
 
 @ROUTES.route('/test', methods=['GET', 'POST'])
 def test_response():

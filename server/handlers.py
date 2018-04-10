@@ -4,6 +4,7 @@ This module contains handlers that will deal with incoming connections.
 from .config import SERVER_ADDRESS
 from .utils import public_ip, log
 from .exceptions import InvalidRequest
+from .client import ResourceNotFound
 
 def new_agent(client, data):
     """
@@ -42,16 +43,23 @@ def existing_agent(client, data):
     """
     This handler is called when an agent with a session id checks in.
     """
-    # TODO: Implement exception handling
     session_id = data['session_id']
 
-    # TODO: Handle session does not exist
-    resp = client.session_checkin(
-        session_id,
-        data.get('responses'),
-        data.get('config'),
-        data.get('facts'))
+    resp = {}
 
-    resp['actions'] = [action.raw_json for action in resp['actions']]
+    try:
+        resp = client.session_checkin(
+            session_id,
+            data.get('responses'),
+            data.get('config'),
+            data.get('facts'))
+        resp['actions'] = [action.raw_json for action in resp['actions']]
+    except ResourceNotFound:
+        # If the session does not exist on the teamserver, reset the session
+        resp['actions'] = [
+            {
+                'action_type': 999
+            }
+        ]
 
     return resp

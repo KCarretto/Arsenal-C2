@@ -60,6 +60,7 @@ def existing_agent(client, data):
         # If the session does not exist on the teamserver, reset the session
         resp['actions'] = [
             {
+                'action_id': '0',
                 'action_type': 999
             }
         ]

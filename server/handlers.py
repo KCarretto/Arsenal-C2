@@ -45,7 +45,9 @@ def existing_agent(client, data):
     """
     session_id = data['session_id']
 
-    resp = {}
+    resp = {
+        'session_id': session_id
+    }
 
     try:
         resp = client.session_checkin(

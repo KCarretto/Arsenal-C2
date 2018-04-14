@@ -56,7 +56,7 @@ def existing_agent(client, data):
             data.get('responses'),
             data.get('config'),
             data.get('facts'),
-            request.remote_ip,
+            request.remote_addr,
         )
         resp['actions'] = [action.raw_json for action in resp['actions']]
     except ResourceNotFound:

@@ -1,6 +1,7 @@
 """
 This module contains handlers that will deal with incoming connections.
 """
+from flask import request
 from .config import SERVER_ADDRESS
 from .utils import public_ip, log
 from .exceptions import InvalidRequest
@@ -54,7 +55,9 @@ def existing_agent(client, data):
             session_id,
             data.get('responses'),
             data.get('config'),
-            data.get('facts'))
+            data.get('facts'),
+            request.remote_ip,
+        )
         resp['actions'] = [action.raw_json for action in resp['actions']]
     except ResourceNotFound:
         # If the session does not exist on the teamserver, reset the session

@@ -31,14 +31,15 @@ def new_agent(client, data):
     servers = config.get('servers', [SERVER_ADDRESS if SERVER_ADDRESS else public_ip()])
     interval = config.get('interval', -1)
     interval_delta = config.get('interval_delta', -1)
-
+    agent_version = data.get('agent_version', 'unknown agent')
     return client.create_session(
         target_uuid.lower(),
         servers,
         interval,
         interval_delta,
         config,
-        facts)
+        facts,
+        agent_version)
 
 def existing_agent(client, data):
     """

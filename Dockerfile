@@ -10,6 +10,7 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -r /opt/arsenal-c2/requirements.txt
 
 # Configure nginx
+COPY docker/certs /etc/nginx/certs
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 
 # Configure the server

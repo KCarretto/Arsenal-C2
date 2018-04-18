@@ -1,0 +1,10 @@
+version: '3'
+
+ services:
+   teamserver:
+     build: .
+     ports:
+       - "80:80"
+     environment:
+       - LOG_LEVEL=INFO
+       - TEAMSERVER_URI=http://redteam-arsenal.com

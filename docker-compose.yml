@@ -1,7 +1,7 @@
 version: '3'
 
  services:
-   teamserver:
+   c2:
      build: .
      ports:
        - "80:80"

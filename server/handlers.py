@@ -50,6 +50,7 @@ def existing_agent(client, data):
     resp = {
         'session_id': session_id
     }
+    remote_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
     try:
         resp = client.session_checkin(
@@ -57,7 +58,7 @@ def existing_agent(client, data):
             data.get('responses'),
             data.get('config'),
             data.get('facts'),
-            request.remote_addr,
+            remote_ip,
         )
         resp['actions'] = [action.raw_json for action in resp['actions']]
     except ResourceNotFound:

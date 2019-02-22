@@ -8,6 +8,7 @@ COPY requirements.txt /opt/arsenal-c2/requirements.txt
 RUN mkdir -p /opt/arsenal-c2/
 RUN pip3 install --upgrade pip
 RUN pip3 install -r /opt/arsenal-c2/requirements.txt
+WORKDIR /opt/arsenal-c2/
 
 # Configure nginx
 COPY docker/certs /etc/nginx/certs
